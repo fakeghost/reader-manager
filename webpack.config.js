@@ -40,7 +40,7 @@ module.exports = {
 		filename: '[name].js'
 	},
 	resolve: {
-		modulesDirectories: ['node_modules', 'styles', 'static', 'src', 'ueditor', 'css', 'img', 'js']
+		modules: ['node_modules', 'styles', 'static', 'src', 'ueditor', 'css', 'img', 'js']
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
