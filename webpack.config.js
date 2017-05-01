@@ -1,6 +1,6 @@
 var path = require('path');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
-var webpack = require('webpack');
+const webpack = require('webpack');
 var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, 'app/index.js');
 var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
@@ -10,12 +10,13 @@ module.exports = {
 		index : "./app/index.js"
 	},
 	devServer: {
-		contentBase : "./build",
+		contentBase : __dirname + "./build",
 		historyApiFallback: true,
     	hot: true,
     	inline: true,
     	progress: true,
     	port: 4000,
+	host: '0.0.0.0'
 	},
 	module: {
 		loaders: [
@@ -36,7 +37,7 @@ module.exports = {
 		]
 	},
 	output: {
-		path: "./build",
+		path: __dirname+"./build",
 		filename: '[name].js'
 	},
 	resolve: {
@@ -54,5 +55,6 @@ module.exports = {
 		new webpack.HotModuleReplacementPlugin(),
 	]
 };
+
 
 
