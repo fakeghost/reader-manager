@@ -52,13 +52,17 @@ const TabsInstance = React.createClass({
 			currentY: 0,
 			flag: false,
       show: false,
-      scale: 0
+      scale: 0,
+      disabeld: true
 		};
 	},
 	//点击触发图片裁剪的事件	
   Click: function(e){
       $("input[type=file]").val('');
   		$("#uploadFile").click();
+      if(navigator.userAgent.indexOf("Safari")>0&&navigator.userAgent.indexOf('Chrome')<1) {
+        this.refs.uploadFile.touchstart();
+      }    
   		this.ReadImage(e);
   },
 
@@ -114,7 +118,6 @@ const TabsInstance = React.createClass({
   		var currentLeft=parseInt(this.state.left) + disX;
         var currentTop=parseInt(this.state.top) + disY;
         if(currentLeft<0){
-        	console.log(currentLeft);
         	currentLeft = 0;
         }else if(currentLeft>containerW-$('.canvas').width()){
         	currentLeft = containerW-$('.canvas').width();
@@ -158,7 +161,6 @@ const TabsInstance = React.createClass({
             $('.canvas').height(270);
             $('canvas').attr('width', '540');
             $('canvas').attr('height', '270');
-            console.log(this.state);
           });
         }
         else if($(target).val() == 'l'){
@@ -182,6 +184,12 @@ const TabsInstance = React.createClass({
       var height = $('.canvas').height();
       var startX = $('.left_top').offset().left - $('.modal-body').offset().left;
       var startY = $('.left_top').offset().top - $('.modal-body').offset().top;
+      if(startX < 0){
+        startX = 0;
+      }
+      if(startY < 0){
+        startY = 0;
+      }
       var canvas = $('canvas')[0];
       var ctx = canvas.getContext("2d");
       var img = $('.img')[0];
@@ -189,8 +197,6 @@ const TabsInstance = React.createClass({
       im.src = img.src;
       var realW = im.width;
       var realH = im.height;
-      console.log(width);
-      console.log(realW);
       var scale = parseInt(realW)/parseInt($('.modal-body').width());
       if($('canvas')[0].offsetHeight == 270){
         ctx.drawImage(img, startX*scale, startY*scale, width*scale, height*scale, 0, 0, 540, 270);
@@ -205,16 +211,16 @@ const TabsInstance = React.createClass({
           $(image).attr('class', 'cutImage_1');
       }
       $('body')[0].append(image);
-      // $(image).css('display', 'block');
-      // $('.see').removeAttr('disabled');
       this.hideModal();
-
+      if($('.cutImage')[$('.cutImage').length-1]&&$('.cutImage_1')[$('.cutImage').length-1]){
+        this.setState({disabeld: false});
+      }
   	},
   render: function(){
   	return(
   		<Tabs defaultActiveKey={1} animation={false} id="noanim-tab-example">
     		<Tab eventKey={1} title="新建推送消息">
-    			<input type="file" id="uploadFile" />
+    			<input type="file" id="uploadFile" ref="uploadFile" />
     			<div className="btn-group">
     				<Button onClick={this.Click} value="s">添加图片(S)</Button>
     				<span className="tips">建议540px*270px</span><br/>
@@ -224,7 +230,7 @@ const TabsInstance = React.createClass({
     				<span className="tips">建议540px*960px</span>
     			</div>
     			<Comment />
-    			<Gbtn />
+    			<Gbtn text={this.state.disabeld}/>
     			<Modal {...this.props} show={this.state.show} onHide={this.hideModal} dialogClassName="custom-modal" backdrop='static'>
     				<Modal.Header closeButton>
     					请裁剪图片
@@ -456,31 +462,70 @@ var Canvas1 = React.createClass({
 
 var Gbtn = React.createClass({
   getInitialState() {
-    return {show: false};
+    return {show: false, cutImage: $('.cutImage')[$('.cutImage').length-1], cutImage_1: $('.cutImage_1')[$('.cutImage_1').length-1]};
   },
   showModal: function(){
-    this.setState({show: true, cutImage: $(".cutImage")[0], cutImage_1: $(".cutImage_1")[0]}, function(){
-      var img = $('.cutImage');
-      $('.topbar').after(img);
-      $('.pre_2').append($('.cutImage_1'));
-      $('.cutImage').css('display', 'block');
-      $('.cutImage').css('width', '100%');
-      $('.cutImage_1').css('display', 'block');
-      $('.cutImage_1').css('height', $('.pre_1')[0].offsetHeight);
-    });
+    
+    //盛放图片的方法
+    var self = this;
+    function putImage(self){
+        var img = self.state.cutImage;
+        var img_1 = self.state.cutImage_1;
+        $('.image_container').html(img);
+        $('.pre_2').html(img_1);
+        $(img).css('display', 'block');
+        $(img).css('width', '100%');
+        $(img_1).css('display', 'block');
+        if($('.image_container').height()&&$('.banner_img').height()&&$('topbar').height()&&$('.borrow').height()&&$('.navbar_1').height()){
+          $(img_1).css('height', $('.pre_1')[0].offsetHeight);
+        }
+        else{
+          setTimeout(function(){
+            $(img_1).css('height', $('.pre_1')[0].offsetHeight);
+          },1000);
+        }
+    }
+
+    if($('.cutImage')[0]){
+      console.log('this way');
+      console.log($('.cutImage')[0]);
+      this.setState({show: true, cutImage: $('.cutImage')[$('.cutImage').length-1], cutImage_1: $('.cutImage_1')[$('.cutImage_1').length-1]}, function(){
+        putImage(self);
+      })
+    }
+
+    else{
+      console.log('shit');
+      this.setState({show: true, cutImage: this.state.cutImage, cutImage_1: this.state.cutImage_1}, function(){
+        putImage(self);
+      })
+    }
   },
   hideModal: function(){
     this.setState({show: false});
   },
   Submit: function(){
-    function dataURLtoBlob(dataurl) {
-      var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-      while(n--){
-          u8arr[n] = bstr.charCodeAt(n);
+    //将base64压缩，压缩图片函数
+    function dataURLtoBlob(base64) {
+      var format = "multipart/form-data";
+      var code = window.atob(base64.split(",")[1]);
+      var aBuffer = new window.ArrayBuffer(code.length);
+      var uBuffer = new window.Uint8Array(aBuffer);
+      for(var i=0;i<code.length;i++){
+        uBuffer[i]=code.charCodeAt(i);
       }
-      return new Blob([u8arr], {type:mime});
-    }   
+      var Builder = window.WebKitBlobBuilder || window.MozBlobBuilder;
+      if(Builder){
+        var builder = new Builder;
+        builder.append(builder);
+        return builder.getBlob(format);
+      }
+      else{
+        return new window.Blob([uBuffer], {type: format})
+      }
+    }
+
+
     var formdata = new FormData();
     var self = this;
     formdata.append("file", dataURLtoBlob(self.state.cutImage.src));
@@ -488,7 +533,6 @@ var Gbtn = React.createClass({
     formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
     formdata.append("author", $(".author").val());
     formdata.append("article", $(".article").val());
-    console.log(formdata.get('author'));
     $.ajax({
       url: 'http://123.207.42.17:8090/AReader/Qiniu/vendor/qiniu/php-sdk/upload.php',
       type: 'post',
@@ -506,17 +550,18 @@ var Gbtn = React.createClass({
 	render: function(){
 		return(	
 			<div className="btn_group">
-				<Button onClick={this.Submit}>推送</Button>
-				<Button onClick={this.showModal} className="see">预览</Button>
+				<Button onClick={this.Submit} disabled={this.props.text}>推送</Button>
+				<Button onClick={this.showModal} className="see" disabled={this.props.text}>预览</Button>
         <Modal {...this.props} show={this.state.show} onHide={this.hideModal} dialogClassName="custom-modal" backdrop='static'>
             <Modal.Header closeButton>
               预览
             </Modal.Header>
             <Modal.Body className="modal_2">
               <div className="pre_1">
-                <img src={require('banner.png')} />
+                <img className="banner_img" src={require('banner.png')} />
                 <img className="topbar" src={require('topbar.png')} />
-                <img src={require('borrow.png')} />
+                <div className="image_container"></div>
+                <img className="borrow" src={require('borrow.png')} />
                 <img className="navbar_1" src={require('navbar.png')} alt=""/>
               </div>
               <div className="pre_2">
@@ -579,15 +624,6 @@ var Title1 = React.createClass({
 
 var PaginationBasic = React.createClass({
     componentDidMount: function () {
-    // function getTime(string) {
-    //   var date = new Date(string);
-    //   var year = date.getFullYear();
-    //   var month = date.getMonth() + 1;
-    //   var day = date.getDate();
-    //   var newdate = year + 
-    // }
-
-
     $.ajax({
       url: 'http://123.207.42.17:8090/AReader/ONE/index.php',
       type: 'get',
@@ -600,21 +636,32 @@ var PaginationBasic = React.createClass({
       jsonp: 'callback',
       success: function (result) {
         for(var i=0; i<result.data.length; i++){
-          $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="#">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
-            
-            //匿名函数传参，解决循环参数的问题
-            (function(i){
+          $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="#" class="editor">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
+            function preClick(){
               $($('.preview')[i]).click(function () {
               var img_1 = new Image();
               img_1.src = result.data[i].url;
               $(img_1).attr('class', 'img_1');
               var img_2 = new Image();
               img_2.src = result.data[i].v_url;
-              if(img_1.complete){self.showModal();};
+              if(img_1.complete){self.showModal();}
+              else{
+                alert('图片尚未加载完成,请等待一下吧');
+              }
                 $('.topbar').after(img_1);
                 $('.pre_2').append(img_2);
-                $(img_2).css('height', $('.pre_1').height());
+                setTimeout(function(){
+                  $(img_2).css('height', $('.pre_1').height())
+                }, 1000)
             })
+            }
+            //匿名函数传参，解决循环参数的问题
+            (function(i){
+
+
+              $($('.editor')[i]).click(function(){
+
+              })
           })(i);
         }
         var self = this;
@@ -657,7 +704,6 @@ var PaginationBasic = React.createClass({
       success: function (result) {
         for(var i=0; i<result.data.length; i++){
           $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="#">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
-            
             //匿名函数传参，解决循环参数的问题
             (function(i){
               $($('.preview')[i]).click(function () {
@@ -666,7 +712,10 @@ var PaginationBasic = React.createClass({
               $(img_1).attr('class', 'img_1');
               var img_2 = new Image();
               img_2.src = result.data[i].v_url;
-              if(img_1.complete){self.showModal();};
+              if(!img_1.complete){
+                alert('图片尚未加载完成,请等待一下吧');
+              }
+              if(img_1.complete){self.showModal();}
                 $('.topbar').after(img_1);
                 $('.pre_2').append(img_2);
                 $(img_2).css('height', $('.pre_1').height());

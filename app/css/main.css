@@ -64,7 +64,8 @@ body{
 	margin-left: 30px;
 }
 #uploadFile{
-	display: none;
+	opacity: 0;
+	cursor: pointer 
 }
 
 .modal-body{
@@ -121,9 +122,8 @@ body{
 
 .canvas{
 	position: absolute;
-	border: 1px solid red;
+	border: 1px dotted gray;
 	box-sizing: content-box;
-	overflow: hidden;
 }
 .modal-body{
 	padding: 0px;
@@ -132,34 +132,35 @@ body{
 
 
 .control{
-	width: 40px;
-	height: 40px;
-	background: red;
+	width: 20px;
+	height: 20px;
+	background: gray;
+	border-radius: 50%;
 }
 
 .left_top{
 	position: absolute;
-	top: -20px;
-	left: -20px;
+	top: -10px;
+	left: -10px;
 }
 
 
 .right_top{
 	position: absolute;
-	top: -20px;
-	right: -20px;
+	top: -10px;
+	right: -10px;
 }
 
 .left_bottom{
 	position: absolute;
-	bottom: -20px;
-	left: -20px;
+	bottom: -10px;
+	left: -10px;
 }
 
 .right_bottom{
 	position: absolute;
-	bottom: -20px;
-	right: -20px;
+	bottom: -10px;
+	right: -10px;
 }
 
 .center{
@@ -169,7 +170,8 @@ body{
 	transform: translate(-50%,-50%);
 	width: 20px;
 	height: 20px;
-	background: red;
+	background: gray;
+	border-radius: 50%;
 }
 
 .modal_2{
@@ -195,6 +197,9 @@ body{
 	margin-right: 10%;
 	margin-top: 50px;
 }
+.pre_2 img{
+	width: 100%;
+}
 
 .navbar_1{
 	margin-top: 30px;
@@ -212,7 +217,9 @@ body{
 	display: none;
 }
 
-
-.see{
-	disabled: disabled;
+.modal-footer{
+	position: relative;
+	z-index: 10000;
 }
+
+
