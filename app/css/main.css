@@ -222,4 +222,32 @@ body{
 	z-index: 10000;
 }
 
+.cut{
+	text-align: left;
+}
 
+.hidden_div{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	display: none;
+	background-color: white;
+	width: 500px;
+	box-sizing: border-box;
+	padding-left: 2rem;
+	padding-bottom: 1rem;
+}
+
+.close_div{
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	width: 10px;
+}
+
+.close_div img{
+	width: 100%;
+	cursor: pointer;
+}
