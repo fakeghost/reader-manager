@@ -7,16 +7,11 @@ var CloseDiv = require('./close')
 var PaginationBasic = React.createClass({
     componentDidMount: function () {
     $.ajax({
-      url: 'http://123.207.42.17:8090/AReader/ONE/index.php',
+      url: 'https://xss.bitworkshop.net/api/one/page/1/5',
       type: 'get',
-      data: {
-        web: '1',
-        page: 1,
-        type: 'getlist',
-      },
-      dataType: 'jsonp',
-      jsonp: 'callback',
+      dataType: 'json',
       success: function (result) {
+      console.log(result.data[0]);
         for(var i=0; i<result.data.length; i++){
           $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="###" class="editor">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
             function preClick(i){
@@ -74,15 +69,9 @@ var PaginationBasic = React.createClass({
     });
     $('.tbody').children('tr').remove();
     $.ajax({
-      url: 'http://123.207.42.17:8090/AReader/ONE/index.php',
+      url: 'https://xss.bitworkshop.net/api/one/page/'+eventKey+'/5',
       type: 'get',
-      data: {
-        web: '1',
-        page: eventKey,
-        type: 'getlist',
-      },
-      dataType: 'jsonp',
-      jsonp: 'callback',
+      dataType: 'json',
       success: function (result) {
         for(var i=0; i<result.data.length; i++){
           $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="###" class="editor">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
@@ -90,6 +79,7 @@ var PaginationBasic = React.createClass({
             (function(i){
               //预览按钮的编写
               $($('.preview')[i]).click(function () {
+
               var img_1 = new Image();
               img_1.src = result.data[i].url;
               $(img_1).attr('class', 'img_1');
@@ -102,14 +92,13 @@ var PaginationBasic = React.createClass({
                 $('.topbar').after(img_1);
                 $('.pre_2').append(img_2);
                 $(img_2).css('height', $('.pre_1').height());
+            })
 
+            $('.editor').click(function(){
+              console.log('shit');
+              self.edit();
+            })
 
-              $($('.editor')[i].click(function(){
-                console.log('shit');
-                this.edit();
-              }))
-
-            })  
           })(i);
         }
         var self = this;

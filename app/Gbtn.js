@@ -71,10 +71,10 @@ var Gbtn = React.createClass({
       formdata.append("web", 1);
       formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
       formdata.append("author", $(".author").val());
-      formdata.append("article", $(".article").val());
-      if($('.cut')[0]){
+      formdata.append("sentence", $(".article").val());
+      if($('.cut').is(':hidden')){
         $.ajax({
-          url: 'xss.bitworkshop.net/api/manage/modify',
+          url: 'https://xss.bitworkshop.net/api/manage/modify',
           type: 'post',
           data: formdata,
           // contentType: false,
@@ -89,7 +89,7 @@ var Gbtn = React.createClass({
       }
       else{
         $.ajax({
-          url: 'http://123.207.42.17:8090/AReader/Qiniu/vendor/qiniu/php-sdk/upload.php',
+          url: 'https://xss.bitworkshop.net/api/manage/create',
           type: 'post',
           data: formdata,
           contentType: false,
