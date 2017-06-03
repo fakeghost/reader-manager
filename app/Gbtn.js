@@ -45,7 +45,7 @@ var Gbtn = React.createClass({
       })
     }
   },
-  Submit: function(){
+  Submit: function(e){
     //将base64压缩，压缩图片函数
     function dataURLtoBlob(base64) {
       var format = "multipart/form-data";
@@ -65,22 +65,27 @@ var Gbtn = React.createClass({
         return new window.Blob([uBuffer], {type: format})
       }
     }
-      var formdata = new FormData();
-      var self = this;
-      formdata.append("file", dataURLtoBlob(self.state.cutImage.src));
-      formdata.append("web", 1);
-      formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
-      formdata.append("author", $(".author").val());
-      formdata.append("sentence", $(".article").val());
-      if($('.cut').is(':hidden')){
+    var dispaly = $('.hidden_div').css('display');
+      if(dispaly == 'block'){
+        var formdata = new FormData();
+        var self = this;
+        console.log(self.state.cutImage.src);
+        formdata.append("file", dataURLtoBlob(self.state.cutImage.src));
+        formdata.append("web", 1);
+        formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
+        formdata.append("author", $(".author").val());
+        formdata.append("sentence", $(".article").val());
+        console.log(this.props.value.substring(4));
+        formdata.append("vol", this.props.value.substring(4));
         $.ajax({
           url: 'https://xss.bitworkshop.net/api/manage/modify',
           type: 'post',
           data: formdata,
-          // contentType: false,
+          contentType: false,
           processData: false,
+          dataType: 'json',
           success: function(data){
-            console.log(data);
+            console.log(data.message);
           },
           error: function (xhr) {
             alert("推送失败");
@@ -88,18 +93,26 @@ var Gbtn = React.createClass({
         })        
       }
       else{
+          var formdata = new FormData();
+          var self = this;
+          formdata.append("file", dataURLtoBlob(self.state.cutImage.src));
+          formdata.append("web", 1);
+          formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
+          formdata.append("author", $(".author").val());
+          formdata.append("sentence", $(".article").val());
         $.ajax({
           url: 'https://xss.bitworkshop.net/api/manage/create',
           type: 'post',
           data: formdata,
           contentType: false,
           processData: false,
+          dataType: 'json',
           success: function(data){
             console.log(data);
-            alert('上传成功');
+            alert(data.message);
           },
           error: function (xhr) {
-            alert("推送失败");
+            console.log(data.message);
           }
         })
       }

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {Modal} from 'react-bootstrap'
 import {Pagination} from 'react-bootstrap'
-var CutImage = require('./CutImage')
+var CutImage_1 = require('./CutImage_1')
 var CloseDiv = require('./close')
 var PaginationBasic = React.createClass({
     componentDidMount: function () {
@@ -11,7 +11,6 @@ var PaginationBasic = React.createClass({
       type: 'get',
       dataType: 'json',
       success: function (result) {
-      console.log(result.data[0]);
         for(var i=0; i<result.data.length; i++){
           $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="###" class="editor">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
             function preClick(i){
@@ -36,8 +35,8 @@ var PaginationBasic = React.createClass({
             (function(i){
               preClick(i);
               $($('.editor')[i]).click(function(){
-                console.log('shit');
-                self.edit();
+                let vol = $(this).parent('th').prev().text()
+                self.edit(vol);
               })
             })(i);
         }
@@ -95,7 +94,7 @@ var PaginationBasic = React.createClass({
             })
 
             $('.editor').click(function(){
-              console.log('shit');
+              console.log(e.target);
               self.edit();
             })
 
@@ -110,9 +109,11 @@ var PaginationBasic = React.createClass({
     })
 
   },
-  edit: function(){
+  edit: function(vol){
       $('.hidden_div').css('display', 'block');
-      ReactDOM.render(<div><CutImage /><CloseDiv /></div>, $('.hidden_div')[0]);
+      this.setState({'vol': vol});
+      let self = this;
+      ReactDOM.render(<div><CutImage_1 text={self.state.vol}/><CloseDiv /></div>, $('.hidden_div')[0]);
   },
 
   render(){

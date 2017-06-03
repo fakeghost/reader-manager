@@ -4,8 +4,8 @@ import {Button} from 'react-bootstrap'
 import {Modal} from 'react-bootstrap'
 var Comment = require('./comment')
 var Gbtn = require('./Gbtn')
-var Canvas1 = require('./Canvas1')
-var CutImage_c = React.createClass({
+var Canvas2 = require('./Canvas2')
+var CutImage_c_1 = React.createClass({
 	getInitialState:function(){
 		return {
 			left: 0,
@@ -29,8 +29,8 @@ var CutImage_c = React.createClass({
   },
 
   //点击使弹窗显示
-  fuck(){
-    console.log('one click');
+  showModal(){
+    console.log('two click');
   	this.setState({show: true});
   },
 
@@ -56,7 +56,7 @@ var CutImage_c = React.createClass({
   		function setImageURL(url){
   			image.src = url;
   		}
-  		_this.fuck();
+  		_this.showModal();
   		_this.PcutImage(image,target);
   	});
   },
@@ -76,8 +76,8 @@ var CutImage_c = React.createClass({
   		var nowY = e.clientY;
   		var disX = nowX - this.state.currentX;
   		var disY = nowY - this.state.currentY;
-  		var containerW = $('.f_body').width();
-  		var containerH = $('.f_body').height();
+  		var containerW = $('.se_body').width();
+  		var containerH = $('.se_body').height();
   		var currentLeft=parseInt(this.state.left) + disX;
         var currentTop=parseInt(this.state.top) + disY;
         if(currentLeft<0){
@@ -114,12 +114,12 @@ var CutImage_c = React.createClass({
   },
   	//准备裁剪图片
   	PcutImage: function(image,target){
-  			$(".f_body").children().remove();
+  			$(".se_body").children().remove();
         if($(target).val() == 's'){
           $('.canvas').css('width','540px');
           $('.canvas').css('height','270px');
           this.setState({scale: 2}, function(){
-            ReactDOM.render(<Canvas1 callbackParent={this.onChanged} scale={this.state.scale}/>, $('.f_body')[0]);
+            ReactDOM.render(<Canvas2 callbackParent={this.onChanged} scale={this.state.scale}/>, $('.se_body')[0]);
             $('.canvas').width(540);
             $('.canvas').height(270);
             $('canvas').attr('width', '540');
@@ -130,7 +130,7 @@ var CutImage_c = React.createClass({
           $('.canvas').css('width', '135px');
           $('.canvas').css('height', '240px');
           this.setState({scale: 0.5625}, function(){
-            ReactDOM.render(<Canvas1 callbackParent={this.onChanged} scale={this.state.scale}/>, $('.f_body')[0]);
+            ReactDOM.render(<Canvas2 callbackParent={this.onChanged} scale={this.state.scale}/>, $('.se_body')[0]);
             $('.canvas').width(135);
             $('.canvas').height(240);
             $('canvas').attr('width', '540');
@@ -138,16 +138,16 @@ var CutImage_c = React.createClass({
           });
         }
         //盛放图片
-  			$(".f_body").append(image);
+  			$(".se_body").append(image);
   			$(image).attr('class', 'img');
-  			$("f_body").css('background-color','rgba(0,0,0,.5)');
+  			$("se_body").css('background-color','rgba(0,0,0,.5)');
   		},	
     //确定裁剪图片
   	confirm: function(){
   		var width = $('.canvas').width();
       var height = $('.canvas').height();
-      var startX = $('.left_top').offset().left - $('.f_body').offset().left;
-      var startY = $('.left_top').offset().top - $('.f_body').offset().top;
+      var startX = $('.left_top').offset().left - $('.se_body').offset().left;
+      var startY = $('.left_top').offset().top - $('.se_body').offset().top;
       if(startX < 0){
         startX = 0;
       }
@@ -161,7 +161,7 @@ var CutImage_c = React.createClass({
       im.src = img.src;
       var realW = im.width;
       var realH = im.height;
-      var scale = parseInt(realW)/parseInt($('.f_body').width());
+      var scale = parseInt(realW)/parseInt($('.se_body').width());
       if($('canvas')[0].offsetHeight == 270){
         ctx.drawImage(img, startX*scale, startY*scale, width*scale, height*scale, 0, 0, 540, 270);
           var image = new Image();
@@ -198,7 +198,7 @@ var CutImage_c = React.createClass({
     				<Modal.Header closeButton>
     					请裁剪图片
     				</Modal.Header>
-    				<Modal.Body className="f_body">
+    				<Modal.Body className="se_body">
     				</Modal.Body>
     				<Modal.Footer>
     					<Button onClick={this.confirm}>确定</Button>
@@ -209,4 +209,4 @@ var CutImage_c = React.createClass({
 	}
 })
 
-module.exports = CutImage_c
+module.exports = CutImage_c_1
