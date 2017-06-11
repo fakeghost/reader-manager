@@ -6,13 +6,17 @@ var CutImage_1 = require('./CutImage_1')
 var CloseDiv = require('./close')
 var PaginationBasic = React.createClass({
     componentDidMount: function () {
+      var author = new Array;
+      var sentence = new Array;
     $.ajax({
       url: 'https://xss.bitworkshop.net/api/one/page/1/5',
       type: 'get',
       dataType: 'json',
       success: function (result) {
+        console.log(result);
         for(var i=0; i<result.data.length; i++){
           $('.tbody').append('<tr><th>VOL. '+ result.data[i].vol + '</th>' + '<th><a href="###" class="preview">预览</a><br /><a href="###" class="editor">编辑</a></th>' + '<th>' + result.data[i].date + '</th>' + '</tr>');
+            
             function preClick(i){
               $($('.preview')[i]).click(function () {
               var img_1 = new Image();
@@ -31,12 +35,14 @@ var PaginationBasic = React.createClass({
                 }, 1000)
             })
             }
+            author[i] = result.data[i].author;
+            sentence[i] = result.data[i].sentence;
             //匿名函数传参，解决循环参数的问题
             (function(i){
               preClick(i);
               $($('.editor')[i]).click(function(){
-                let vol = $(this).parent('th').prev().text()
-                self.edit(vol);
+                let vol = $(this).parent('th').prev().text();
+                self.edit(vol, author[i], sentence[i]);
               })
             })(i);
         }
@@ -63,6 +69,8 @@ var PaginationBasic = React.createClass({
   },
 
   handleSelect(eventKey){
+    var author = new Array;
+    var sentence = new Array;
     this.setState({
       activePage: eventKey
     });
@@ -92,10 +100,11 @@ var PaginationBasic = React.createClass({
                 $('.pre_2').append(img_2);
                 $(img_2).css('height', $('.pre_1').height());
             })
-
+            author[i] = result.data[i].author;
+            sentence[i] = result.data[i].sentence;
             $('.editor').click(function(){
-              console.log(e.target);
-              self.edit();
+              let vol = $(this).parent('th').prev().text()
+              self.edit(vol, author[i], sentence[i]);
             })
 
           })(i);
@@ -109,10 +118,14 @@ var PaginationBasic = React.createClass({
     })
 
   },
-  edit: function(vol){
+  edit: function(vol, author, sentence){
       $('.hidden_div').css('display', 'block');
       this.setState({'vol': vol});
       let self = this;
+      console.log(author);
+      $(".author").val(author);
+      $(".article").val(sentence);
+      console.log($(".author").val());
       ReactDOM.render(<div><CutImage_1 text={self.state.vol}/><CloseDiv /></div>, $('.hidden_div')[0]);
   },
 

@@ -193,7 +193,7 @@ var CutImage_c_1 = React.createClass({
     				<span className="tips">建议540px*960px</span>
     			</div>
     			<Comment />
-    			<Gbtn text={this.state.disabeld} value={this.props.text}/>
+    			<Gbtn text={this.state.disabeld} value={this.props.text} />
     			<Modal {...this.props} show={this.state.show} onHide={this.hideModal} dialogClassName="custom-modal" backdrop='static'>
     				<Modal.Header closeButton>
     					请裁剪图片
