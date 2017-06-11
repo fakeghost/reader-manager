@@ -122,11 +122,10 @@ var PaginationBasic = React.createClass({
       $('.hidden_div').css('display', 'block');
       this.setState({'vol': vol});
       let self = this;
-      console.log(author);
-      $(".author").val(author);
-      $(".article").val(sentence);
-      console.log($(".author").val());
       ReactDOM.render(<div><CutImage_1 text={self.state.vol}/><CloseDiv /></div>, $('.hidden_div')[0]);
+      console.log($(".author"));
+      $($(".author")[1]).attr('placeholder', author);
+      $($(".article")[1]).attr('placeholder', sentence);
   },
 
   render(){

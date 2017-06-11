@@ -69,12 +69,12 @@ var Gbtn = React.createClass({
       if(dispaly == 'block'){
         var formdata = new FormData();
         var self = this;
-        console.log(this.props.author);
+        console.log($($(".author")[1]).val());
         formdata.append("file", dataURLtoBlob(self.state.cutImage.src));
         formdata.append("web", 1);
         formdata.append("file1", dataURLtoBlob(self.state.cutImage_1.src));
-        formdata.append("author", $(".author").val());
-        formdata.append("sentence", $(".article").val());
+        formdata.append("author", $($(".author")[1]).val());
+        formdata.append("sentence", $($(".article")[1]).val());
         formdata.append("vol", this.props.value.substring(4));
         $.ajax({
           url: 'https://xss.bitworkshop.net/api/manage/modify',
